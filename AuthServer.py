@@ -9,7 +9,7 @@ from twisted.internet import reactor
 from quarry.net.server import ServerFactory, ServerProtocol
 import psycopg2
 from random import randint
-from .config import database, password, port, host, user
+from config import database, password, port, host, user
 
 con = None
 
