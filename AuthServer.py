@@ -34,11 +34,13 @@ class AuthProtocol(ServerProtocol):
             pin = cur.fetchone()
             print(pin)
             if not pin:
-                while not pin:
+                pin = randint(1000, 9999)
+                cur.execute('SELECT pin FROM auths where pin=%s;', [pin])
+                res = cur.fetchone()
+                while res:
                     pin = randint(1000, 9999)
                     cur.execute('SELECT pin FROM auths where pin=%s;', [pin])
-                    pin = cur.fetchone()
-                    print(pin)
+                    res = cur.fetchone()
 
                 cur.execute('INSERT INTO auths (minecraft_uuid, pin) VALUES (%s, %s);', (str(id), str(pin)))
                 con.commit()
