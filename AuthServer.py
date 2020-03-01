@@ -29,21 +29,27 @@ class AuthProtocol(ServerProtocol):
 
         cur = con.cursor()
 
-        cur.execute('SELECT pin FROM auths where minecraft_uuid=%s;', [id])
-        pin = cur.fetchone()
-        if not pin:
-            while not pin:
-                pin = randint(1000, 9999)
-                cur.execute('SELECT pin FROM auths where pin=%s;', [pin])
-                pin = cur.fetchone()
+        try:
+            cur.execute('SELECT pin FROM auths where minecraft_uuid=%s;', [id])
+            pin = cur.fetchone()
+            print(pin)
+            if not pin:
+                while not pin:
+                    pin = randint(1000, 9999)
+                    cur.execute('SELECT pin FROM auths where pin=%s;', [pin])
+                    pin = cur.fetchone()
+                    print(pin)
 
-            cur.execute('INSERT INTO auths (minecraft_uuid, pin) VALUES (%s, %s);', (str(id), str(pin)))
-            con.commit()
-        else:
-            pin = pin[0]
+                cur.execute('INSERT INTO auths (minecraft_uuid, pin) VALUES (%s, %s);', (str(id), str(pin)))
+                con.commit()
+            else:
+                pin = pin[0]
 
-        # Kick the player.
-        self.close(f"Send command to Curator bot: ,auth {pin}")
+            # Kick the player.
+            self.close(f"Send command to Curator bot: ,auth {pin}")
+        except Exception as e:
+            print(e)
+            self.close('No')
 
 
 class AuthFactory(ServerFactory):
